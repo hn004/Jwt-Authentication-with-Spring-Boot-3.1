@@ -1,8 +1,11 @@
 package com.security.controller;
 
+import com.security.entities.User;
 import com.security.model.JwtRequest;
 import com.security.model.JwtResponse;
+import com.security.repositories.UserRepo;
 import com.security.sec.JwtHelper;
+import com.security.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +29,8 @@ public class AuthController {
     private AuthenticationManager manager;
     @Autowired
     private JwtHelper helper;
+    @Autowired
+    private UserService service;
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> Login(@RequestBody JwtRequest request){
@@ -37,6 +42,8 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
+
     public void doAuthenticate(String email, String password){
         UsernamePasswordAuthenticationToken authentication= new UsernamePasswordAuthenticationToken(email, password);
         try{
@@ -44,6 +51,11 @@ public class AuthController {
         }catch(BadCredentialsException e){
             throw new BadCredentialsException("invalid credentials");
         }
+    }
+
+    @PostMapping("/create")
+    public User createUser(@RequestBody User user){
+        return service.createUser(user);
     }
 
 
